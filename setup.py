@@ -10,7 +10,6 @@ setup(
     author='Niraj Adhikari',
     author_email='nrjadkry@gmail.com',
     packages=find_packages(),
-    package_data={'nepali-date-utils': ['nepali-date-utils/docs/user_guide.md']},
     license='GPLv3',
     url='https://github.com/nrjadkry/nepali-date-utils',
     install_requires=[],
