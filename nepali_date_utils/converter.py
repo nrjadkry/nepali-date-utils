@@ -1,4 +1,4 @@
-from data.data import calendar_data
+from nepali_date_utils.data import calendar_data
 from datetime import datetime, timedelta
 
 en_max_year = 2099
