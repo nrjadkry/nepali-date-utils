@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name='nepali_date_utils',
-    version='0.1',
+    version='0.2',
     description='Convert Nepali to English Dates: Easily switch between Nepali and English dates with this Python package.',
     author='Niraj Adhikari',
     author_email='nrjadkry@gmail.com',
