@@ -1,2 +1,1 @@
-
-from .date_converter import converter
+from nepali_date_utils.date_converter import converter

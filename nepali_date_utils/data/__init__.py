@@ -1,1 +1,1 @@
-from .data import calendar_data
+from nepali_date_utils.data.data import calendar_data
