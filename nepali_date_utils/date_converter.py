@@ -59,10 +59,6 @@ class DateConverter:
         except KeyError:
             raise ValueError("Date out of range")
 
-    def parse_date(self, date_str):
-        date_arr = list(map(int, date_str.split('/')))
-        return {'year': date_arr[0], 'month': date_arr[1], 'day': date_arr[2]}
-
 
     def difference_in_bs(self, date):
         date_arr = list(map(int, date.split('/')))
@@ -99,13 +95,28 @@ class DateConverter:
     def ad_to_bs(cls, date_str):
         return cls().convert_to_bs(cls().difference_in_ad(date_str))
 
+
+    @staticmethod
+    def parse_date(date_str):
+        date_arr = list(map(int, date_str.split('/')))
+        return {'year': date_arr[0], 'month': date_arr[1], 'day': date_arr[2]}
+
     @classmethod
     def bs_to_ad(cls, date_str):
         date_obj = cls.parse_date(date_str)
         if not cls.verify_nepali_date(date_obj):
             raise ValueError("Date out of range")
-        difference = cls.difference_in_bs(cls, date_str)
-        return cls.offset_ad_days(cls, difference)
+        difference = cls.difference_in_bs(date_str)
+        return cls.offset_ad_days(difference)
+
+
+    @classmethod
+    def bs_to_ad(cls, date_str):
+        date_obj = cls().parse_date(date_str)
+        if not converter.verify_nepali_date(date_obj):  # Call verify_nepali_date on the instance
+            raise ValueError("Date out of range")
+        difference = converter.difference_in_bs(date_str)  # Call difference_in_bs on the instance
+        return converter.offset_ad_days(difference)  # Call offset_ad_days on the instance
 
 
 converter = DateConverter()
