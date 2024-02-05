@@ -14,9 +14,16 @@ You can install the package via pip:
 pip install nepali_date_utils
 ```
 
-To convert english date AD to nepali date BS:
+To convert English date (AD) to Nepali date (BS):
+
+```python
+from nepali-date-utils import converter
+converter.ad_to_bs("2024/02/03")
+```
+
+To convert Nepali date (BS) to English date (AD):
 
 ```python
 from nepali_date_utils import converter
-converter.ad_to_bs("2024/02/03")
+converter.bs_to_ad("2080/02/03")
 ```
