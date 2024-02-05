@@ -1,5 +1,5 @@
 from nepali_date_utils.data import calendar_data
-from datetime import datetime
+from datetime import datetime, timedelta
 
 class DateConverter:
     en_max_year = 2099
@@ -8,7 +8,7 @@ class DateConverter:
     reference_ad = {"year": 2017, "month": 2, "day": 11}
     reference_bs = {"year": 2073, "month": 10, "day": 29}
 
-    def verify_english_date(self, date_obj):
+    def verify_nepali_date(self, date_obj):
         year = date_obj['year']
         month = date_obj['month']
         day = date_obj['day']
@@ -32,42 +32,80 @@ class DateConverter:
         return {'diff_days': diff_days}
 
     def convert_to_bs(self, day_data):
-        day_count = day_data['diff_days']
-        bs_date = self.reference_bs.copy()
-        if day_count >= 0:
-            bs_date['day'] += day_count
-            while bs_date['day'] > calendar_data[bs_date['year']][bs_date['month'] - 1]:
-                bs_date['day'] -= calendar_data[bs_date['year']][bs_date['month'] - 1]
-                bs_date['month'] += 1
-                if bs_date['month'] > 12:
-                    bs_date['year'] += 1
-                    bs_date['month'] = 1
-        else:
-            day_count = abs(day_count)
-            while day_count >= 0:
-                if day_count < calendar_data[bs_date['year']][bs_date['month'] - 1]:
-                    day_count = calendar_data[bs_date['year']][bs_date['month'] - 1] - day_count
-                    break
-                day_count -= calendar_data[bs_date['year']][bs_date['month'] - 1]
-                bs_date['month'] -= 1
-                if bs_date['month'] == 0:
-                    bs_date['year'] -= 1
-                    bs_date['month'] = 12
-            bs_date['day'] = day_count
-        return bs_date
+        try:
+            day_count = day_data['diff_days']
+            bs_date = self.reference_bs.copy()
+            if day_count >= 0:
+                bs_date['day'] += day_count
+                while bs_date['day'] > calendar_data[bs_date['year']][bs_date['month'] - 1]:
+                    bs_date['day'] -= calendar_data[bs_date['year']][bs_date['month'] - 1]
+                    bs_date['month'] += 1
+                    if bs_date['month'] > 12:
+                        bs_date['year'] += 1
+                        bs_date['month'] = 1
+            else:
+                day_count = abs(day_count)
+                while day_count >= 0:
+                    if day_count < calendar_data[bs_date['year']][bs_date['month'] - 1]:
+                        day_count = calendar_data[bs_date['year']][bs_date['month'] - 1] - day_count
+                        break
+                    day_count -= calendar_data[bs_date['year']][bs_date['month'] - 1]
+                    bs_date['month'] -= 1
+                    if bs_date['month'] == 0:
+                        bs_date['year'] -= 1
+                        bs_date['month'] = 12
+                bs_date['day'] = day_count
+            return bs_date
+        except KeyError:
+            raise ValueError("Date out of range")
 
     def parse_date(self, date_str):
-        # Split the date string into year, month, and day components
         date_arr = list(map(int, date_str.split('/')))
-        # Create a dictionary to represent the date object
         return {'year': date_arr[0], 'month': date_arr[1], 'day': date_arr[2]}
+
+
+    def difference_in_bs(self, date):
+        date_arr = list(map(int, date.split('/')))
+        date_obj = {'year': date_arr[0], 'month': date_arr[1], 'day': date_arr[2]}
+
+
+        start, end = (self.reference_bs, date_obj) if (date_obj['year'], date_obj['month'], date_obj['day']) > (self.reference_bs['year'], self.reference_bs['month'], self.reference_bs['day']) else (date_obj, self.reference_bs)
+        factor = 1 if (date_obj['year'], date_obj['month'], date_obj['day']) > (self.reference_bs['year'], self.reference_bs['month'], self.reference_bs['day']) else -1
+
+
+        day_count = sum(calendar_data[i][12] for i in range(start['year'], end['year'] + 1))
+        day_count -= sum(calendar_data[start['year']][i] for i in range(start['month'] - 1))
+        day_count -= sum(calendar_data[end['year']][i] for i in range(end['month'] - 1, 12))
+        day_count -= start['day']
+        day_count += end['day']
+
+        return day_count * factor
+
+    def offset_ad_days(self, day_count):
+        base_date = datetime(self.reference_ad['year'], self.reference_ad['month'], self.reference_ad['day'])
+        offset_date = base_date + timedelta(days=day_count)
+        
+        month = offset_date.month
+
+        date_obj = {
+            'year': offset_date.year,
+            'month': month,
+            'day': offset_date.day
+        }
+        
+        return date_obj
 
     @classmethod
     def ad_to_bs(cls, date_str):
-        date_obj = cls().parse_date(date_str)
-        if not cls().verify_english_date(date_obj):
-            raise ValueError("Date out of range")
         return cls().convert_to_bs(cls().difference_in_ad(date_str))
+
+    @classmethod
+    def bs_to_ad(cls, date_str):
+        date_obj = cls.parse_date(date_str)
+        if not cls.verify_nepali_date(date_obj):
+            raise ValueError("Date out of range")
+        difference = cls.difference_in_bs(cls, date_str)
+        return cls.offset_ad_days(cls, difference)
 
 
 converter = DateConverter()
