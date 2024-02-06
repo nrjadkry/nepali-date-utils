@@ -17,7 +17,7 @@ pip install nepali_date_utils
 To convert English date (AD) to Nepali date (BS):
 
 ```python
-from nepali-date-utils import converter
+from nepali_date_utils import converter
 converter.ad_to_bs("2024/02/03")
 ```
 
