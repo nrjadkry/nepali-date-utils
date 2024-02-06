@@ -23,5 +23,8 @@ jobs:
 
       - name: Test with unittest
         run: |
-          pwd
+          echo "currentdir: $(pwd)"
+          echo "filelist: $(ls -la)"
+          echo "prevdir: $(ls -la ../)"
+          
           python -m unittest discover -s ./tests  -p 'test_*.py'
