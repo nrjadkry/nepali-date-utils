@@ -72,6 +72,8 @@ class DateConverter:
                         bs_date["year"] -= 1
                         bs_date["month"] = 12
                 bs_date["day"] = day_count
+            return f"{bs_date['year']}/{bs_date['month']}/{bs_date['day']}"
+
             return bs_date
         except KeyError:
             raise ValueError("Date out of range")
@@ -122,12 +124,8 @@ class DateConverter:
             self.reference_ad["day"],
         )
         offset_date = base_date + timedelta(days=day_count)
+        return offset_date.date().strftime("%Y/%m/%d")
 
-        month = offset_date.month
-
-        date_obj = {"year": offset_date.year, "month": month, "day": offset_date.day}
-
-        return date_obj
 
     @classmethod
     def ad_to_bs(cls, date_str):
