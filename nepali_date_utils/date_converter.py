@@ -124,6 +124,7 @@ class DateConverter:
 
         return day_count * factor
 
+
     def offset_ad_days(self, day_count):
         base_date = datetime(
             self.reference_ad["year"],
@@ -131,7 +132,7 @@ class DateConverter:
             self.reference_ad["day"],
         )
         offset_date = base_date + timedelta(days=day_count)
-        return offset_date.date().strftime("%Y/%m/%d")
+        return offset_date.date().strftime("%Y/%-m/%-d")
 
 
     @classmethod
