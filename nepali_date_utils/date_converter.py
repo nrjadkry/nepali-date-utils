@@ -3,8 +3,8 @@ from datetime import datetime, timedelta
 
 
 class DateConverter:
-    en_max_year = 2099
-    en_min_year = 1944
+    np_max_year = 2099
+    np_min_year = 1944
     days_in_year = 365
     reference_ad = {"year": 2017, "month": 2, "day": 11}
     reference_bs = {"year": 2073, "month": 10, "day": 29}
@@ -13,11 +13,18 @@ class DateConverter:
         year = date_obj["year"]
         month = date_obj["month"]
         day = date_obj["day"]
-        return (
-            self.en_min_year <= year <= self.en_max_year
-            and 1 <= month <= 12
-            and 1 <= day <= 31
-        )
+
+        if year < self.np_min_year or year > self.np_max_year:
+            return False
+        if month < 1 or month > 12:
+            return False
+        if (
+            day < 1
+            or day > calendar_data[year][month-1]
+        ):
+            return False
+        return True
+
 
     def difference_in_ad(self, date):
         # Split the date string into year, month, and day components
@@ -117,6 +124,7 @@ class DateConverter:
 
         return day_count * factor
 
+
     def offset_ad_days(self, day_count):
         base_date = datetime(
             self.reference_ad["year"],
@@ -124,7 +132,7 @@ class DateConverter:
             self.reference_ad["day"],
         )
         offset_date = base_date + timedelta(days=day_count)
-        return offset_date.date().strftime("%Y/%m/%d")
+        return offset_date.date().strftime("%Y/%-m/%-d")
 
 
     @classmethod
